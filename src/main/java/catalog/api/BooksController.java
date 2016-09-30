@@ -51,8 +51,7 @@ public class BooksController {
 		Book existingBook = repository.getById(id);
 		if (existingBook == null)
 			throw new BookNotFoundException(id);
-		else if (!existingBook.getTitle().equals(book.getTitle()) || !existingBook.getAuthor().equals(book.getAuthor()) ||
-				(!StringUtils.isEmpty(existingBook.getIsbn()) && !existingBook.getIsbn().equals(book.getIsbn()))) {
+		else if (!existingBook.changesAllowed(book)) {
 			throw new ImmutablePropertiesUpdatedException();
 		} else {
 			return repository.saveOrUpdate(book);

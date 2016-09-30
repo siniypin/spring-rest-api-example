@@ -57,7 +57,8 @@ public class BookTest {
 		boolean ebook = false;
 		Book sut = new Book("", randomTitle, randomAuthor, 1999, "", cover, "", ebook, "", "");
 		Book anotherSut = new Book("", randomTitle, randomAuthor, 1999, "", cover, "", ebook, "", "");
-		String expectedId = String.format("%s-%s-%s-%s", randomTitle.hashCode(), randomAuthor.hashCode(), cover.hashCode(), ((Boolean)ebook).hashCode()); 
+		String expectedId = String.format("%s-%s-%s-%s", randomTitle.hashCode(), randomAuthor.hashCode(),
+				cover.hashCode(), ((Boolean) ebook).hashCode());
 
 		// act
 		String id = sut.getId();
@@ -147,5 +148,38 @@ public class BookTest {
 		// act
 		// assert
 		Assert.assertEquals(1, sut.getNumberOfCopies());
+	}
+
+	@Test
+	public void shouldBeImmutableToIsbnChanges() {
+		// arrange
+		Book sut = new Book("978-3-16-148410-0", UUID.randomUUID().toString(), UUID.randomUUID().toString());
+		Book another = new Book("978-3-16-148411-0", sut.getTitle(), sut.getAuthor());
+
+		// act
+		// assert
+		Assert.assertFalse(sut.changesAllowed(another));
+	}
+	
+	@Test
+	public void shouldAllowAddingIsbn() {
+		// arrange
+		Book sut = new Book("", UUID.randomUUID().toString(), UUID.randomUUID().toString());
+		Book another = new Book("978-3-16-148410-0", sut.getTitle(), sut.getAuthor());
+
+		// act
+		// assert
+		Assert.assertTrue(sut.changesAllowed(another));
+	}
+
+	@Test
+	public void shouldBeImmutableToTitleChanges() {
+		// arrange
+		Book sut = new Book(UUID.randomUUID().toString(), UUID.randomUUID().toString(), UUID.randomUUID().toString());
+		Book another = new Book(sut.getIsbn(), UUID.randomUUID().toString(), sut.getAuthor());
+
+		// act
+		// assert
+		Assert.assertFalse(sut.changesAllowed(another));
 	}
 }

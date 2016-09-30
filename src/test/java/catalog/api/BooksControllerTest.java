@@ -158,13 +158,6 @@ public class BooksControllerTest {
 	}
 	
 	@Test
-	public void shouldReplyWithOkIfIsbnAdded() throws Exception {
-		String bookJson = toJson(new Book(UUID.randomUUID().toString(), bookWithoutIsbn.getTitle(), bookWithoutIsbn.getAuthor()));
-		mockMvc.perform(put("/catalog/books/" + bookWithoutIsbn.getId()).contentType(contentType).content(bookJson))
-				.andExpect(status().isOk());
-	}
-	
-	@Test
 	public void shouldReplyWith404IfBookToDeleteNotFound() throws Exception {
 		mockMvc.perform(delete("/catalog/books/missing").contentType(contentType)).andExpect(status().isNotFound());
 	}

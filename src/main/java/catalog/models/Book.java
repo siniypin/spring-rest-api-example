@@ -140,6 +140,12 @@ public class Book {
 		this.numberOfCopies++;
 	}
 
+	public boolean changesAllowed(Book another) {
+		return (this.getTitle().equals(another.getTitle()) && this.getAuthor().equals(another.getAuthor())
+				&& (StringUtils.isEmpty(this.getIsbn()) && !this.getIsbn().equals(another.getIsbn())
+						&& another.isIsbnValid()));
+	}
+
 	@JsonIgnore
 	public boolean isValid() {
 		return !StringUtils.isEmpty(this.title) && !StringUtils.isEmpty(this.author);

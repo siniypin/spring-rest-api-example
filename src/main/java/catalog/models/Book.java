@@ -9,6 +9,12 @@ public class Book {
 	private String isbn;
 	private String title;
 	private String author;
+	private int year;
+	private BookCover cover;
+	private String coverColor;
+	private boolean ebook;
+	private String description;
+	private String notes;
 
 	protected Book() {
 		this("", "", "");
@@ -19,6 +25,17 @@ public class Book {
 		this.setTitle(title);
 		this.setAuthor(author);
 		this.id = StringUtils.isEmpty(isbn) || !isIsbnValid() ? generateUniqueId() : isbn;
+	}
+
+	public Book(String isbn, String title, String author, int year, BookCover cover, String coverColor, boolean ebook,
+			String description, String notes) {
+		this(isbn, title, author);
+		this.setYear(year);
+		this.setCover(cover);
+		this.setCoverColor(coverColor);
+		this.setEbook(ebook);
+		this.setDescription(description);
+		this.setNotes(notes);
 	}
 
 	public String getId() {
@@ -43,6 +60,54 @@ public class Book {
 
 	public void setAuthor(String author) {
 		this.author = author;
+	}
+
+	public int getYear() {
+		return year;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
+	}
+
+	public BookCover getCover() {
+		return cover;
+	}
+
+	public void setCover(BookCover cover) {
+		this.cover = cover;
+	}
+
+	public String getCoverColor() {
+		return coverColor;
+	}
+
+	public void setCoverColor(String coverColor) {
+		this.coverColor = coverColor;
+	}
+
+	public boolean isEbook() {
+		return ebook;
+	}
+
+	public void setEbook(boolean ebook) {
+		this.ebook = ebook;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getNotes() {
+		return notes;
+	}
+
+	public void setNotes(String notes) {
+		this.notes = notes;
 	}
 
 	public boolean isValid() {

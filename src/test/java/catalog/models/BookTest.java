@@ -1,5 +1,6 @@
 package catalog.models;
 
+import java.awt.Color;
 import java.util.UUID;
 
 import org.junit.Assert;
@@ -107,13 +108,25 @@ public class BookTest {
 		// assert
 		Assert.assertFalse(sut.isValid());
 	}
-	
+
 	@Test
 	public void shouldBeValidWithAllFieldsProvided() {
 		// arrange
 		String randomTitle = UUID.randomUUID().toString();
 		String randomAuthor = UUID.randomUUID().toString();
 		Book sut = new Book("", randomTitle, randomAuthor);
+
+		// act
+		// assert
+		Assert.assertTrue(sut.isValid());
+	}
+
+	@Test
+	public void shouldBeValidIfOtherPropsNotProvided() {
+		// arrange
+		String randomTitle = UUID.randomUUID().toString();
+		String randomAuthor = UUID.randomUUID().toString();
+		Book sut = new Book("", randomTitle, randomAuthor, 0, null, null, false, null, null);
 
 		// act
 		// assert

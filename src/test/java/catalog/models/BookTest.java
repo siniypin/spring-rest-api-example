@@ -70,10 +70,19 @@ public class BookTest {
 		String id2 = anotherSut.getId();
 
 		// assert
-		Assert.assertNotEquals(id1,  id2);
+		Assert.assertNotEquals(id1, id2);
 	}
 
 	@Test
 	public void shouldGenerateUUIDIfISBNIsIncorrect() {
+		// arrange
+		String isbn = "978-3-16-148410-";
+		Book sut = new Book(isbn);
+
+		// act
+		String id = sut.getId();
+
+		// assert
+		Assert.assertNotEquals(isbn, id);
 	}
 }

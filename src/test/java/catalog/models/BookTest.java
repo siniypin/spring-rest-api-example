@@ -48,6 +48,29 @@ public class BookTest {
 
 	@Test
 	public void shouldGenerateUUIDIfISBNIsEmpty() {
+		// arrange
+		// https://www.uuidgenerator.net/version1
+		Book sut = new Book("");
+
+		// act
+		String id = sut.getId();
+
+		// assert
+		Assert.assertNotEquals("", id);
+	}
+
+	@Test
+	public void shouldGenerateUniqueIds() {
+		// arrange
+		Book sut = new Book("");
+		Book anotherSut = new Book("");
+
+		// act
+		String id1 = sut.getId();
+		String id2 = anotherSut.getId();
+
+		// assert
+		Assert.assertNotEquals(id1,  id2);
 	}
 
 	@Test

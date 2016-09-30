@@ -1,5 +1,9 @@
 package catalog.models;
 
+import java.util.UUID;
+
+import org.springframework.util.StringUtils;
+
 public class Book {
 	private String id;
 	private String isbn;
@@ -10,7 +14,7 @@ public class Book {
 
 	public Book(String isbn) {
 		this.isbn = isbn;
-		this.id = isbn;
+		this.id = StringUtils.isEmpty(isbn) ? generateUniqueId() : isbn;
 	}
 
 	public String getId() {
@@ -23,5 +27,9 @@ public class Book {
 
 	public boolean isValid() {
 		return false;
+	}
+	
+	protected String generateUniqueId(){
+		return UUID.randomUUID().toString();
 	}
 }

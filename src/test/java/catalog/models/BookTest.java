@@ -1,9 +1,5 @@
 package catalog.models;
 
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -35,5 +31,26 @@ public class BookTest {
 
 		// assert
 		Assert.assertFalse(isValid);
+	}
+
+	@Test
+	public void shouldUseISBNAsId() {
+		// arrange
+		String isbn = "978-3-16-148410-0";
+		Book sut = new Book(isbn);
+
+		// act
+		String id = sut.getId();
+
+		// assert
+		Assert.assertEquals(isbn, id);
+	}
+
+	@Test
+	public void shouldGenerateUUIDIfISBNIsEmpty() {
+	}
+
+	@Test
+	public void shouldGenerateUUIDIfISBNIsIncorrect() {
 	}
 }

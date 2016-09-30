@@ -7,13 +7,17 @@ import org.springframework.util.StringUtils;
 public class Book {
 	private String id;
 	private String isbn;
+	private String title;
+	private String author;
 
-	public Book() {
-		this("");
+	protected Book() {
+		this("", "", "");
 	}
 
-	public Book(String isbn) {
+	public Book(String isbn, String title, String author) {
 		this.isbn = isbn;
+		this.setTitle(title);
+		this.setAuthor(author);
 		this.id = StringUtils.isEmpty(isbn) || !isIsbnValid() ? generateUniqueId() : isbn;
 	}
 
@@ -25,8 +29,24 @@ public class Book {
 		return isbn;
 	}
 
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
 	public boolean isValid() {
-		return false;
+		return !StringUtils.isEmpty(this.title) && !StringUtils.isEmpty(this.author);
 	}
 
 	protected String generateUniqueId() {

@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.Before;
@@ -20,6 +21,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -28,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import catalog.Application;
 import catalog.models.Book;
 import catalog.models.BooksRepository;
+import org.junit.Assert;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -41,12 +45,17 @@ public class BooksControllerTest {
 
 	@Autowired
 	private BooksRepository repository;
+	private Book bookWithoutIsbn;
+	private Book bookWithIsbn;
 
 	private MockMvc mockMvc;
 
 	@Before
 	public void setup() throws Exception {
 		this.mockMvc = webAppContextSetup(webApplicationContext).build();
+		List<Book> books = repository.getAll();
+		bookWithoutIsbn = books.get(0);
+		bookWithIsbn = books.get(1);
 	}
 
 	@Test
@@ -65,6 +74,44 @@ public class BooksControllerTest {
 		String bookJson = toJson(new Book("", UUID.randomUUID().toString(), UUID.randomUUID().toString()));
 		mockMvc.perform(post("/catalog/books").contentType(contentType).content(bookJson)).andExpect(status().isOk())
 				.andExpect(content().contentType(contentType));
+	}
+
+	@Test
+	public void shouldIncreaseNumberOfCopiesOfBookWithIsbn() throws Exception {
+		// arrange
+		List<Book> booksBefore = repository.getAll();
+		int numberOfCopiesBefore = bookWithIsbn.getNumberOfCopies();
+		int before = booksBefore.size();
+		String bookJson = toJson(bookWithIsbn);
+
+		// act
+		// assert
+		mockMvc.perform(post("/catalog/books").contentType(contentType).content(bookJson)).andExpect(status().isOk())
+				.andExpect(content().contentType(contentType)).andDo(new ResultHandler() {
+					public void handle(MvcResult result) {
+						Assert.assertEquals(before, repository.getAll().size());
+						Assert.assertEquals(numberOfCopiesBefore + 1, repository.getById(bookWithIsbn.getId()).getNumberOfCopies());
+					}
+				});
+	}
+	
+	@Test
+	public void shouldIncreaseNumberOfCopiesOfBookWithoutIsbn() throws Exception {
+		// arrange
+		List<Book> booksBefore = repository.getAll();
+		int numberOfCopiesBefore = bookWithoutIsbn.getNumberOfCopies();
+		int before = booksBefore.size();
+		String bookJson = toJson(bookWithoutIsbn);
+
+		// act
+		// assert
+		mockMvc.perform(post("/catalog/books").contentType(contentType).content(bookJson)).andExpect(status().isOk())
+				.andExpect(content().contentType(contentType)).andDo(new ResultHandler() {
+					public void handle(MvcResult result) {
+						Assert.assertEquals(before, repository.getAll().size());
+						Assert.assertEquals(numberOfCopiesBefore + 1, repository.getById(bookWithoutIsbn.getId()).getNumberOfCopies());
+					}
+				});
 	}
 
 	@Test
@@ -91,20 +138,32 @@ public class BooksControllerTest {
 
 	@Test
 	public void shouldReplyWith403IfTitleUpdated() throws Exception {
-		Book book = repository.getAll().get(1);
-		String bookJson = toJson(new Book(book.getIsbn(), UUID.randomUUID().toString(), book.getAuthor()));
-		mockMvc.perform(put("/catalog/books/" + book.getId()).contentType(contentType).content(bookJson))
+		String bookJson = toJson(new Book(bookWithIsbn.getIsbn(), UUID.randomUUID().toString(), bookWithIsbn.getAuthor()));
+		mockMvc.perform(put("/catalog/books/" + bookWithIsbn.getId()).contentType(contentType).content(bookJson))
 				.andExpect(status().isForbidden());
 	}
 
 	@Test
 	public void shouldReplyWith403IfAuthorUpdated() throws Exception {
-		Book book = repository.getAll().get(1);
-		String bookJson = toJson(new Book(book.getIsbn(), book.getAuthor(), UUID.randomUUID().toString()));
-		mockMvc.perform(put("/catalog/books/" + book.getId()).contentType(contentType).content(bookJson))
+		String bookJson = toJson(new Book(bookWithIsbn.getIsbn(), bookWithIsbn.getTitle(), UUID.randomUUID().toString()));
+		mockMvc.perform(put("/catalog/books/" + bookWithIsbn.getId()).contentType(contentType).content(bookJson))
 				.andExpect(status().isForbidden());
 	}
 
+	@Test
+	public void shouldReplyWith403IfIsbnUpdated() throws Exception {
+		String bookJson = toJson(new Book(UUID.randomUUID().toString(), bookWithIsbn.getTitle(), bookWithIsbn.getAuthor()));
+		mockMvc.perform(put("/catalog/books/" + bookWithIsbn.getId()).contentType(contentType).content(bookJson))
+				.andExpect(status().isForbidden());
+	}
+	
+	@Test
+	public void shouldReplyWithOkIfIsbnAdded() throws Exception {
+		String bookJson = toJson(new Book(UUID.randomUUID().toString(), bookWithoutIsbn.getTitle(), bookWithoutIsbn.getAuthor()));
+		mockMvc.perform(put("/catalog/books/" + bookWithoutIsbn.getId()).contentType(contentType).content(bookJson))
+				.andExpect(status().isOk());
+	}
+	
 	@Test
 	public void shouldReplyWith404IfBookToDeleteNotFound() throws Exception {
 		mockMvc.perform(delete("/catalog/books/missing").contentType(contentType)).andExpect(status().isNotFound());
@@ -112,7 +171,7 @@ public class BooksControllerTest {
 
 	@Test
 	public void shouldDeleteABookSuccessfully() throws Exception {
-		mockMvc.perform(delete("/catalog/books/" + repository.getAll().get(0).getId()).contentType(contentType))
+		mockMvc.perform(delete("/catalog/books/" + repository.getAll().get(2).getId()).contentType(contentType))
 				.andExpect(status().isOk());
 	}
 

@@ -49,23 +49,30 @@ public class BookTest {
 	}
 
 	@Test
-	public void shouldGenerateUUIDIfISBNIsEmpty() {
+	public void shouldGenerateConsistentUIDIfISBNIsEmpty() {
 		// arrange
-		// https://www.uuidgenerator.net/version1
-		Book sut = new Book("", "", "");
+		String randomTitle = UUID.randomUUID().toString();
+		String randomAuthor = UUID.randomUUID().toString();
+		BookCover cover = BookCover.HARD;
+		boolean ebook = false;
+		Book sut = new Book("", randomTitle, randomAuthor, 1999, "", cover, "", ebook, "", "");
+		Book anotherSut = new Book("", randomTitle, randomAuthor, 1999, "", cover, "", ebook, "", "");
+		String expectedId = String.format("%s-%s-%s-%s", randomTitle.hashCode(), randomAuthor.hashCode(), cover.hashCode(), ((Boolean)ebook).hashCode()); 
 
 		// act
 		String id = sut.getId();
+		String anotherId = sut.getId();
 
 		// assert
-		Assert.assertNotEquals("", id);
+		Assert.assertEquals(expectedId, id);
+		Assert.assertEquals(expectedId, anotherId);
 	}
 
 	@Test
-	public void shouldGenerateUniqueIds() {
+	public void shouldGenerateUniqueIdsForDifferentBooks() {
 		// arrange
-		Book sut = new Book("", "", "");
-		Book anotherSut = new Book("", "", "");
+		Book sut = new Book("", UUID.randomUUID().toString(), UUID.randomUUID().toString());
+		Book anotherSut = new Book("", UUID.randomUUID().toString(), UUID.randomUUID().toString());
 
 		// act
 		String id1 = sut.getId();
@@ -130,5 +137,15 @@ public class BookTest {
 		// act
 		// assert
 		Assert.assertTrue(sut.isValid());
+	}
+
+	@Test
+	public void shouldBeInitialisedWithOneCopy() {
+		// arrange
+		Book sut = new Book();
+
+		// act
+		// assert
+		Assert.assertEquals(1, sut.getNumberOfCopies());
 	}
 }

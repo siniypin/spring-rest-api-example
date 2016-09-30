@@ -7,16 +7,16 @@ import java.util.stream.Collectors;
 
 public class DefaultInMemoryBooksRepositoryImpl implements BooksRepository {
 	private Map<String, Book> books;
-	
+
 	public DefaultInMemoryBooksRepositoryImpl() {
 		ArrayList<Book> hardCodedBooks = new ArrayList<Book>() {
 			{
 				add(new Book("", "The Lord of the Rings", "J.R.R.Tolkien", 1998, "S-Z", BookCover.HARD, "", false, "",
 						"favourite"));
-				add(new Book("978-1567314137", "Millionaire's Path", "Mark Fisher", 2000, "MJF Books", BookCover.HARD, "",
-						false, "", "rubbish"));
-				add(new Book("978-1567314134", "Millionaire's Path", "Mark Fisher", 2000, "MJF Books", null, "", true, "",
-						"rubbish"));
+				add(new Book("978-1567314137", "Millionaire's Path", "Mark Fisher", 2000, "MJF Books", BookCover.HARD,
+						"", false, "", "rubbish"));
+				add(new Book("978-1567314134", "Millionaire's Path", "Mark Fisher", 2000, "MJF Books", BookCover.NONE,
+						"", true, "", "rubbish"));
 			}
 		};
 		books = hardCodedBooks.stream().collect(Collectors.<Book, String, Book> toMap(x -> x.getId(), x -> x));
@@ -36,7 +36,7 @@ public class DefaultInMemoryBooksRepositoryImpl implements BooksRepository {
 	public Book saveOrUpdate(Book book) {
 		books.put(book.getId(), book);
 		return book;
-	} 
+	}
 
 	@Override
 	public void delete(Book book) {

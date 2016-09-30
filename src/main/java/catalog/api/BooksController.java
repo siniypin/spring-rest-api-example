@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,7 +29,13 @@ public class BooksController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public Book create(@Validated @RequestBody Book book) {
-		return repository.saveOrUpdate(book);
+		Book existingBook = repository.getById(book.getId());
+		if (existingBook == null) {
+			return repository.saveOrUpdate(book);
+		} else {
+			existingBook.increaseNumberOfCopies();
+			return repository.saveOrUpdate(existingBook);
+		}
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -44,7 +51,8 @@ public class BooksController {
 		Book existingBook = repository.getById(id);
 		if (existingBook == null)
 			throw new BookNotFoundException(id);
-		else if (existingBook.getTitle() != book.getTitle() || existingBook.getAuthor() != book.getAuthor()) {
+		else if (!existingBook.getTitle().equals(book.getTitle()) || !existingBook.getAuthor().equals(book.getAuthor()) ||
+				(!StringUtils.isEmpty(existingBook.getIsbn()) && !existingBook.getIsbn().equals(book.getIsbn()))) {
 			throw new ImmutablePropertiesUpdatedException();
 		} else {
 			return repository.saveOrUpdate(book);
@@ -56,7 +64,7 @@ public class BooksController {
 		Book book = repository.getById(id);
 		if (book == null)
 			throw new BookNotFoundException(id);
-		else 
+		else
 			repository.delete(book);
 		return new ResponseEntity(HttpStatus.OK);
 	}

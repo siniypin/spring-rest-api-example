@@ -2,12 +2,21 @@ package catalog.models;
 
 import java.util.UUID;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.springframework.util.StringUtils;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Book {
 	private String id;
 	private String isbn;
+	@NotNull
+	@Size(min = 1, max = 255)
 	private String title;
+	@NotNull
+	@Size(min = 1, max = 255)
 	private String author;
 	private int year;
 	private String publisher;
@@ -120,6 +129,7 @@ public class Book {
 		this.notes = notes;
 	}
 
+	@JsonIgnore
 	public boolean isValid() {
 		return !StringUtils.isEmpty(this.title) && !StringUtils.isEmpty(this.author);
 	}

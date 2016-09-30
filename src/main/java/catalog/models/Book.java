@@ -10,6 +10,7 @@ public class Book {
 	private String title;
 	private String author;
 	private int year;
+	private String publisher;
 	private BookCover cover;
 	private String coverColor;
 	private boolean ebook;
@@ -27,9 +28,10 @@ public class Book {
 		this.id = StringUtils.isEmpty(isbn) || !isIsbnValid() ? generateUniqueId() : isbn;
 	}
 
-	public Book(String isbn, String title, String author, int year, BookCover cover, String coverColor, boolean ebook,
+	public Book(String isbn, String title, String author, int year, String publisher, BookCover cover, String coverColor, boolean ebook,
 			String description, String notes) {
 		this(isbn, title, author);
+		this.setPublisher(publisher);
 		this.setYear(year);
 		this.setCover(cover);
 		this.setCoverColor(coverColor);
@@ -60,6 +62,14 @@ public class Book {
 
 	public void setAuthor(String author) {
 		this.author = author;
+	}
+
+	public String getPublisher() {
+		return publisher;
+	}
+
+	public void setPublisher(String publisher) {
+		this.publisher = publisher;
 	}
 
 	public int getYear() {

@@ -1,6 +1,5 @@
 package catalog.models;
 
-import java.awt.Color;
 import java.util.UUID;
 
 import org.junit.Assert;
@@ -126,7 +125,7 @@ public class BookTest {
 		// arrange
 		String randomTitle = UUID.randomUUID().toString();
 		String randomAuthor = UUID.randomUUID().toString();
-		Book sut = new Book("", randomTitle, randomAuthor, 0, null, null, false, null, null);
+		Book sut = new Book("", randomTitle, randomAuthor, 0, "", null, null, false, null, null);
 
 		// act
 		// assert

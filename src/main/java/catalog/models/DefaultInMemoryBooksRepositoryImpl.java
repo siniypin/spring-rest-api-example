@@ -36,7 +36,7 @@ public class DefaultInMemoryBooksRepositoryImpl implements BooksRepository {
 	public Book saveOrUpdate(Book book) {
 		books.put(book.getId(), book);
 		return book;
-	}
+	} 
 
 	@Override
 	public void delete(Book book) {

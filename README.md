@@ -5,18 +5,18 @@ Following is a description of the design of Books API and reasoning behind it.
 ## Resources
 Unsurprisingly, my CRUD interface to the collection of books provides following 5 methods:
 
-GET /catalog/books
-GET /catalog/books/<id>
-POST /catalog/books
-PUT /catalog/books/<id>
-DELETE /catalog/books/<id>
+- GET /catalog/books
+- GET /catalog/books/<id>
+- POST /catalog/books
+- PUT /catalog/books/<id>
+- DELETE /catalog/books/<id>
 
-The first decision is obvious as it is encoded in the URI. There is no definition of owner of collection, as you can see. I decided I do not need multi-tenancy for this simple task (neither it was requested), although I was tempted to put "/my" in front of the namespace. 
+The first decision is obvious as it is encoded in the URI. There is no definition of owner of collection, as you can see. I decided I do not need multi-tenancy for this simple task (neither it was requested), although I was tempted to put "/my" in front of the namespace.  
 
-Secondly, I didn't add an "/api" namespace, and the reason behind this is that I prefer to think of REST not as of HTTP + JSON, but as of distributed hyper-media. Media available in certain locations that just happen to be encoded with JSON. So if you think about it, it turns that everything in the Web is an API, this is why speaking namespaces like "catalog" make more sense than "api" to me. Arguing about REST-interface definition I usually refer to this brilliant speech Ted Neward delivered at NSBCon http://fast.wistia.net/embed/iframe/s4aqt9esc0?popover=true
+Secondly, I didn't add an "/api" namespace, and the reason behind this is that I prefer to think of REST not as of HTTP + JSON, but as of distributed hyper-media. Media available in certain locations that just happen to be encoded with JSON. So if you think about it, it turns that everything in the Web is an API, this is why speaking namespaces like "catalog" make more sense than "api" to me. Arguing about REST-interface definition I usually refer to this brilliant speech Ted Neward delivered at NSBCon http://fast.wistia.net/embed/iframe/s4aqt9esc0?popover=true  
 
 The third decision is not so obvious and is not visible in the scheme, but has rather dramatic effect on semantics of this API. It is so big, that at some point I even considered going CRD instead of CRUD. I am speaking about books' identity. In my domain model a book identity is a bundle of title, author, cover and type (I should have included a publication year as well) OR, thanks to a publishing industry that came up with a definition of a book identifier decades ago, ISBN (https://en.wikipedia.org/wiki/International_Standard_Book_Number). So books in my domain model are immutable regarding these properties and none of them allowed to be changed ever since the book was persisted. However, not all books are guaranteed to have ISBN (self-published ones, for instance), this is why model generates an identifier using aforementioned properties in the lack of (or in case of incorrect) ISBN. Model generates equal ids consistently, provided that identifying attributes of different objects are equal. 
-So what does it mean for API? For instance, if you happen to POST the object with the same ISBN twice your collection would not grow up to two objects, nether would API return an error code. Instead, already existing object with the same identifier would get a number of copies increased. 
+So what does it mean for API? For instance, if you happen to POST the object with the same ISBN twice your collection would not grow up to two objects, nether would API return an error code. Instead, already existing object with the same identifier would get a number of copies increased.  
 
 ## Model
 A Book model has following attributes:

@@ -39,22 +39,20 @@ Title and author are two required attributes, failing to provide them would caus
 1. I didn't want to get any external dependencies for this test task, so I implemented the simplest id generation algorithm I came up with. In real project I'd go with some sort of hash, a name-based uuid as in IETF UUID specification, perhaps. I'd pick a library that implements that, I mean.
 2. Immutability is implemented and checked for three out of five(or six) properties, for the sake of simplicity;
 3. I stored all attributes in a single "flat" Book model as I didn't want to complicate matters. If I had more time, I'd probably decouple attributes that are allowed to be changed from identity of the book;
-4. Used a custom in memory repository for the sake of speed of development. I saved myself some time googling how to setup an in-memory storage and mock it up in tests. I guess it is supposed to be extremely easy;
 
 ##What's missing:
-1. Decreasing the number of copies upon objects' deletion. It took me a while to get to the version provided. I ran out of time, so I decided to stop;
-2. Pagination - should I used a JpaRepository I'd get it almost for free, decided not to waste time on it;
+1. Decreasing the number of copies upon objects' deletion. It took me a while to get to the version provided;
+2. Pagination - should I used a JpaRepository from the beginning, I'd get it almost for free, decided not to waste time on it however;
 3. HATEOAS - well, it is nice to have this feature, but definitely not a must have, kind of a delighter;
 4. Some edge cases aren't tested and probably do not work as expected;
 5. More Book attributes.
 
 ##What did I do wrong:
-1. If I was to write the test again, I'd write unit tests for controller, instead of integration tests. Spent a lot of time figuring how to setup integration tests properly;
-2. Should have made more interruptions;
+1. If I was to write the test again, I'd write unit tests for controller, instead of integration tests;
 
 ##What did I do well:
-1. Test driving a model and a controller, I enjoyed TDD-ing as always;
-2. I think I had a sudden breakthrough the moment I realised a collection can include multiple copies of a same book, but not copies of the object (Evans calls it 'refactoring towards deeper insight', so be it);
+1. Test driving a model and a controller, enjoying TDD-ing as always;
+2. I think I had a sudden breakthrough the moment I realised a collection can include multiple copies of a same book, but not copies of the object (Eric Evans calls it 'refactoring towards deeper insight', so be it);
 3. All in all I like the model I came up with, the rest is just the infrastructure one has to wire together;
 
 Time it took: ~4:00. I started at around 5:00 PM and worked till 8:30 PM with small breaks up to 10 minutes in total. Then I continued from 10:10 PM through to 10:50 PM. 
